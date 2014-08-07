@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<registry>
+  
+  <records interface="medialog.lxml.interfaces.ILxmlSettings">
+      <value key="scrape_url_pair"></value>
+      <value key="scrape_javascript">True</value>
+      <value key="scrape_style">True</value>
+      <value key="scrape_safe_attrs_only">True</value>
+      <value key="scrape_url">http://plone.org</value>
+      <value key="scrape_host_whitelist"></value>
+      <value key="scrape_scripts">True</value>
+      <value key="scrape_comments">True</value>
+      <value key="scrape_links">True</value>
+      <value key="scrape_meta">True</value>
+      <value key="scrape_page_structure">True</value>
+      <value key="scrape_processing_instructions">True</value>
+      <value key="scrape_embedded">True</value>
+      <value key="scrape_frames">True</value>
+      <value key="scrape_forms">True</value>
+      <value key="scrape_annoying_tags">True</value>
+      <value key="scrape_remove_tags">None</value>
+      <value key="scrape_allow_tags">None</value>
+      <value key="scrape_kill_tags">None</value>
+      <value key="scrape_remove_unknown_tags">True</value>
+      <value key="scrape_add_nofollow">False</value>
+      <value key="scrape_whitelist_tags">set(['iframe', 'embed'])</value>
+  </records>
+
+</registry>
