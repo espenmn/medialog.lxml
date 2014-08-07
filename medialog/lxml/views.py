@@ -7,7 +7,7 @@ from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone import api
-from medialog.lxml.interfaces import IMobilethemeTwoSettings
+from medialog.lxml.interfaces import ILxmlSettings
 
 import requests
 import lxml.html
