@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-,
 
 #import logging
 #from Acquisition import aq_inner
@@ -24,28 +24,28 @@ class Scrape(BrowserView):
     def scraped(self):
         selector = '#container' #default value
         #get settings from control panel / registry
-        scrape_add_nofollow = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_add_nofollow')
-        scrape_allow_tags = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_allow_tags')
-        scrape_annoying_tags = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_annoying_tags')
-        scrape_comments = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_comments')
-        scrape_embedded = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_embedded')
-        scrape_forms = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_forms')
-        scrape_frames = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_frames')
-        scrape_javascript = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_javascript')
-        scrape_kill_tags = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_kill_tags')
-        scrape_links = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_links')
-        scrape_meta = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_meta')
-        scrape_page_structure = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_page_structure')
-        scrape_processing_instructions = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_processing_instructions')
-        scrape_remove_tags = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_remove_tags')
-        scrape_remove_unknown_tags = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_remove_unknown_tags')
-        scrape_safe_attrs_only = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_safe_attrs_only')
-        scrape_scripts = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_scripts')
-        scrape_style = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_style')
-        scrape_url_pair = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_url_pair')
-        scrape_whitelist = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_host_whitelist')
-        scrape_whitelist_tags = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_whitelist_tags')
-        url = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_url')
+        scrape_add_nofollow = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_add_nofollow')
+        scrape_allow_tags = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_allow_tags')
+        scrape_annoying_tags = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_annoying_tags')
+        scrape_comments = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_comments')
+        scrape_embedded = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_embedded')
+        scrape_forms = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_forms')
+        scrape_frames = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_frames')
+        scrape_javascript = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_javascript')
+        scrape_kill_tags = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_kill_tags')
+        scrape_links = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_links')
+        scrape_meta = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_meta')
+        scrape_page_structure = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_page_structure')
+        scrape_processing_instructions = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_processing_instructions')
+        scrape_remove_tags = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_remove_tags')
+        scrape_remove_unknown_tags = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_remove_unknown_tags')
+        scrape_safe_attrs_only = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_safe_attrs_only')
+        scrape_scripts = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_scripts')
+        scrape_style = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_style')
+        scrape_url_pair = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_url_pair')
+        scrape_whitelist = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_host_whitelist')
+        scrape_whitelist_tags = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_whitelist_tags')
+        url = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_url')
         
         #get url if it was set in the request
         if hasattr(self.request, 'url'):
@@ -122,7 +122,7 @@ class Scrape(BrowserView):
         
     
     def repl(html, link):
-        scrape_url_pair = api.portal.get_registry_record('medialog.lxml.interfaces.IMobilethemeTwoSettings.scrape_url_pair')
+        scrape_url_pair = api.portal.get_registry_record('medialog.lxml.interfaces.ILxmlSettings.scrape_url_pair')
         root_url = api.portal.get().absolute_url()
         
         #dont modyfy image links
