@@ -21,6 +21,9 @@ from DateTime import DateTime
 class Scrape(BrowserView):
     """   A View that uses lxml to embed external content    """
     
+    def scrapetitle(self):
+        return self.scrapetitle
+    
     def scraped(self):
         selector = '#container' #default value
         #get settings from control panel / registry
@@ -62,6 +65,8 @@ class Scrape(BrowserView):
         #get html from the requested url
         r = requests.get(url)
         tree = lxml.html.fromstring(r.text)
+        #this is for use in the createpage view
+        self.scrapetitle = (tree.xpath('//title/text()'))[0]# Get page title  
              
         #clean evil stuff
         cleaner = Cleaner(
@@ -153,16 +158,10 @@ class ScrapeView(Scrape):
 class CreatePage(Scrape):
     """ Create pages from external content"""
     
-    def __init_(self, context, request):
-        self.context = context
-        self.request = request
-        #looks ugly, but works
-        #self.request.selector    =   urllib.quote(context.scrape_selector).decode('utf8') 
-        #self.request.url         =   urllib.quote(context.scrape_url).decode('utf8')
-        
     
     def __call__(self):
         #the view is only avalable for folderish content
-        portal = self.context
-        import pdb; pdb.set_trace() 
-        page = api.content.create(container=portal, type='Document', id='someid', title='Some Page')
+        folder = self.context
+        bodytext = self.scraped()
+        scrapetitle = self.scrapetitle
+        page = api.content.create(container=folder, type='Document', title=scrapetitle, text=bodytext)
