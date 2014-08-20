@@ -18,7 +18,6 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
-  
   <browser:page
     for="*"
     name="scrape"
@@ -34,7 +33,6 @@
       permission="zope.Public"
       template="scrape_view.pt"
   /> 
-  
   
   <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"

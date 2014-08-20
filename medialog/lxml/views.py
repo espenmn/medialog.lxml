@@ -53,7 +53,7 @@ class Scrape(BrowserView):
         #get url if it was set in the request
         if hasattr(self.request, 'url'):
             url = str(urllib.unquote((self.request.url).decode('utf8')))
-            
+
         #get base url, 
         #if the url is taken from request
         parts = url.split('//', 1)
@@ -158,10 +158,13 @@ class ScrapeView(Scrape):
 class CreatePage(Scrape):
     """ Create pages from external content"""
     
-    
     def __call__(self):
         #the view is only avalable for folderish content
         folder = self.context
+        #get url if it was set in the request
+        if hasattr(self.request, 'url'):
+            self.request.url = str(urllib.unquote((self.request.url).decode('utf8')))
+        
         bodytext = self.scraped()
-        scrapetitle = self.scrapetitle
+        scrapetitle = self.scrapetitle.encode('utf8')
         page = api.content.create(container=folder, type='Document', title=scrapetitle, text=bodytext)
