@@ -37,10 +37,10 @@
   
   
   <browser:page
-    for="*"
-    name="scrape_create"
+    for="Products.CMFCore.interfaces._content.IFolderish"
+    name="createpage"
     class=".views.CreatePage"
-    permission="cmf.ManagePortal"
+    permission="zope2.View"
   />
      
 </configure>

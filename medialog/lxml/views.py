@@ -150,19 +150,19 @@ class ScrapeView(Scrape):
     
         
         
-def CreatePage(BrowserView):
+class CreatePage(Scrape):
     """ Create pages from external content"""
-	
-    def __init__(self, context, request):
+    
+    def __init_(self, context, request):
         self.context = context
         self.request = request
         #looks ugly, but works
         #self.request.selector    =   urllib.quote(context.scrape_selector).decode('utf8') 
         #self.request.url         =   urllib.quote(context.scrape_url).decode('utf8')
-	
-		#folder=
-		portal = api.portal.get()
-		page = api.content.create(container=portal, type='Page', id='someid', title='Some Page')
-
+        
     
-    
+    def __call__(self):
+        #the view is only avalable for folderish content
+        portal = self.context
+        import pdb; pdb.set_trace() 
+        page = api.content.create(container=portal, type='Document', id='someid', title='Some Page')
