@@ -35,5 +35,12 @@
       template="scrape_view.pt"
   /> 
   
+  
+  <browser:page
+    for="*"
+    name="scrape_create"
+    class=".views.CreatePage"
+    permission="cmf.ManagePortal"
+  />
      
 </configure>

@@ -149,3 +149,20 @@ class ScrapeView(Scrape):
           self.request.url         =   urllib.quote(context.scrape_url).decode('utf8')
     
         
+        
+def CreatePage(BrowserView):
+    """ Create pages from external content"""
+	
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        #looks ugly, but works
+        #self.request.selector    =   urllib.quote(context.scrape_selector).decode('utf8') 
+        #self.request.url         =   urllib.quote(context.scrape_url).decode('utf8')
+	
+		#folder=
+		portal = api.portal.get()
+		page = api.content.create(container=portal, type='Page', id='someid', title='Some Page')
+
+    
+    
