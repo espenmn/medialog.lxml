@@ -3,6 +3,8 @@ medialog.lxml
 
 WARNING: This product contains a view that could be a security RISK!
 
+https://www.youtube.com/watch?v=ka7feR_AEck
+
 
 About the views and behavior
 ============================
