@@ -7,9 +7,9 @@ WARNING: This product contains a view that could be a security RISK!
 About the views and behavior
 ============================
 
-- This is very experimental. Please give feedback and suggestions.
+- This is slightly experimental. Please give feedback and suggestions.
 
-- The embed views are probably insecure, if the remote site contains evil code.
+- The embed views might be insecure, although if you are restrictive with the settings in the control panel you should be able to filter out evil code.
 
 
 
