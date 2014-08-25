@@ -3,7 +3,7 @@ medialog.lxml
 
 WARNING: This product contains a view that could be a security RISK!
 
-https://www.youtube.com/watch?v=ka7feR_AEck
+https://www.youtube.com/watch?v=jE1gLOBBKb4
 
 
 About the views and behavior
