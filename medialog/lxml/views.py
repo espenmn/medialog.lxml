@@ -176,7 +176,11 @@ class CreatePages(Scrape):
     def __call__(self):
         #the view is only avalable for folderish content
         folder = self.context
-        #path = self.context.absolute_url() + '/@@createpage'
-        folder.restrictedTraverse('@@createpage')
+        path = self.context.absolute_url() + '/@@createpage'
         
+        view = api.content.get_view(
+            name='createpage',
+            context=folder,
+            request=request,
+        )
         return "Done"
