@@ -156,7 +156,7 @@ class ScrapeView(Scrape):
         
         
 class CreatePage(Scrape):
-    """ Create pages from external content"""
+    """ Create page from external content"""
     
     def __call__(self):
         #the view is only avalable for folderish content
@@ -168,3 +168,15 @@ class CreatePage(Scrape):
         bodytext = self.scraped()
         scrapetitle = self.scrapetitle.encode('utf8')
         page = api.content.create(container=folder, type='Document', title=scrapetitle, text=bodytext)
+
+
+class CreatePages(Scrape):
+    """ Create pages from list of urls"""
+    
+    def __call__(self):
+        #the view is only avalable for folderish content
+        folder = self.context
+        #path = self.context.absolute_url() + '/@@createpage'
+        folder.restrictedTraverse('@@createpage')
+        
+        return "Done"
