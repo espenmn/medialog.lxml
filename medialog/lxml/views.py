@@ -187,5 +187,5 @@ class CreatePages(Scrape):
         
         import pdb; pdb.set_trace()
         for items in toadd:        
-            page = api.content.create(container=folder, type='ansatt', title=(items[0] + ' ' + items[1]), e_post=items[2], rolle=items[3], romnr=items[4], kontaktlaerer=items[5] )
+            page = api.content.create(container=folder, type='ansatt', title=(items[0] + ' ' + items[1]), e_post=items[2], kategori=items[3], romnr=items[4], kontaktlaerer=items[5] )
         return "Done"
