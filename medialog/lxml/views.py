@@ -9,17 +9,10 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
 
-
-from zope.interface import Interface
- 
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore import permissions
-
 # Form and validation
 from z3c.form import field
-import z3c.form.button
+from z3c.form import button
 from plone.directives import form
-#from collective.z3cform.grok.grok import PloneFormWrapper
 import plone.autoform.form
 
 import StringIO
@@ -282,7 +275,7 @@ class XXCreatePages(form.SchemaForm):
 class ICreatePagesFormSchema(form.Schema):
     """ Define fields used on the form """
 
-    csv_file = NamedFile(title=u"CSV file"
+    csv_file = NamedFile(title=u"CSV file")
     
     
 
@@ -352,7 +345,7 @@ class CreatePages(form.SchemaForm):
         return updated
 
 
-    @z3c.form.button.buttonAndHandler(u'Import'), name='import')
+    @button.buttonAndHandler(u'Import', name='import')
     def importCompanies(self, action):
         """ Create and handle form button "Create company"
         """
