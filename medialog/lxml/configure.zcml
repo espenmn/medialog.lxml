@@ -38,14 +38,14 @@
     for="Products.CMFCore.interfaces._content.IFolderish"
     name="createpage"
     class=".views.CreatePage"
-    permission="zope2.View"
+    permission="cmf.ManagePortal"
   />
 
   <browser:page
     for="Products.CMFCore.interfaces._content.IFolderish"
     name="createpages"
     class=".views.CreatePages"
-    permission="zope2.View"
+    permission="cmf.ManagePortal"
   />
    
 </configure>

@@ -3,8 +3,37 @@
 #import logging
 #from Acquisition import aq_inner
 from zope.i18nmessageid import MessageFactory
+from zope import schema
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
+
+
+
+from zope.interface import Interface
+ 
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore import permissions
+
+# Form and validation
+from z3c.form import field
+import z3c.form.button
+from plone.directives import form
+#from collective.z3cform.grok.grok import PloneFormWrapper
+import plone.autoform.form
+
+import StringIO
+import csv
+
+
+from plone.namedfile.field import NamedFile
+from plone.i18n.normalizer import idnormalizer
+
+
+
+
+
+
 
 from plone import api
 from medialog.lxml.interfaces import ILxmlSettings
@@ -17,6 +46,7 @@ from lxml.html.clean import Cleaner
 
 from DateTime import DateTime
  
+
 
 class Scrape(BrowserView):
     """   A View that uses lxml to embed external content    """
@@ -170,22 +200,202 @@ class CreatePage(Scrape):
         page = api.content.create(container=folder, type='Document', title=scrapetitle, text=bodytext)
 
 
-class CreatePages(Scrape):
+class OrgCreatePages(Scrape):
     """ Create pages from list of urls"""
     
     def __call__(self):
         #the view is only avalable for folderish content
         folder = self.context
+        
         #path = self.context.absolute_url() + '/@@createpage'
+        #looks ugly, but works
+        self.request.selector = 'body'
+        self.request.url       =   urllib.quote('http://vg.no').decode('utf8')
+    
+        view = api.content.get_view(
+            name='createpage',
+            context=folder,
+            request=self.request,
+        )
         
-        #view = api.content.get_view(
-        #    name='createpage',
-        #    context=folder,
-        #    request=request,
-        #)
-        toadd =  [['Tom', 'Aksdal', 'Tom.Aksdal@hfk.no', 'Lærer', '325', '1STD'], ['Lill Kalleklev', 'Almås', 'Lill.Almas@hfk.no', 'Lærer', '423', '2STUSPG'], ['Janne', 'Andersen', 'Janne.Andersen@hfk.no', 'Lærer', '522', '3STUSPI'], ['Ole Kristian', 'Apelseth', 'Ole.Kristian.Apelseth@hfk.no', 'Lærer', '324', '1STA'], ['Kjersti Skjåk', 'Astad', 'Kjersti.Skjak.Astad@hfk.no', 'Lærer', '422', '2STUSPE'], ['Anders', 'Bakke', 'Anders.Bakke@hfk.no', 'Lærer', '544', ''], ['Anita Rose', 'Bakke', 'Anita.Bakke@hfk.no', 'Lærer', '347', ''], ['Benedikte Olsbø', 'Berdinessen', 'Benedikte.Olsbo.Berdinessen@hfk.no', 'Lærer', '326', '1STI'], ['Marianne', 'Berentzen', 'Marianne-H.Berentzen@hfk.no', 'IKT konsulent', '', ''], ['Kjell Andreas', 'Berg', 'Kjell.Andreas.Berg@hfk.no', 'Lærer', '522', '3STUSPG'], ['Arvid', 'Berge', 'Arvid.Berge@hfk.no', 'Driftsleder', '', ''], ['Lars', 'Berntsen', 'Lars.Berntsen@hfk.no', 'Avdelingsleder', '236', ''], ['Kari', 'Birkeland', 'Kari.Birkeland@hfk.no', 'Lærer', '523', ''], ['Elisa', 'Bjersand', 'Elisa.Bjersand@hfk.no', 'Avdelingsleder', '235', ''], ['Ann Elise', 'Bjørdal', 'Ann.Elise.Bjordal@hfk.no', 'Renholdsleder', '', ''], ['Bjarte', 'Bjørgaas', 'Bjarte.Bjorgaas@hfk.no', 'Lærer', '544', ''], ['Endre', 'Bjørlykke', 'Endre.Borlykke@hfk.no', 'Lærer', '422', '2STUSPB'], ['Anne', 'Bjørnestad', 'Anne.Bjornestad@hfk.no', 'Lærer', '325', '1STF'], ['Ranka', 'Blazevic', 'Ranka.Blazevic@hfk.no', 'Lærer', '422', ''], ['Kjartan', 'Blom', 'Kjartan.Blom@hfk.no', 'Lærer', '543', ''], ['Berit', 'Bomann-Larsen', 'Berit.Bomann-Larsen@hfk.no', 'Lærer', '521', '3STUSPD'], ['William Robert', 'Brown Jr', 'William.Robert.Brown@hfk.no', 'Lærer', '423', ''], ['Akiko', 'Brudvik', 'Akiko.Brudvik@hfk.no', 'Lærer', '543', ''], ['Stig', 'Bruhjell', 'Stig.Bruhjell@hfk.no', 'Lærer', '326', '1STG'], ['Marit', 'Christensen', 'Marit.Christensen@hfk.no', 'Lærer', '523', ''], ['Ingunn Palma', 'Dahle', 'Ingunn.Dahle@hfk.no', 'Lærer', '345', ''], ['Somsuan', 'Dandoy', 'Somsuan.Dandoy@hfk.no', 'Renholder', '', ''], ['Hoang Thanh', 'Dang', 'Hoang.Dang@hfk.no', 'IKT konsulent', '444', ''], ['Ole-Kristian', 'Eide', 'Ole-Kristian.Eide@hfk.no', 'Lærer', '421', ''], ['Stig', 'Eide', 'Stig.Eide@hfk.no', 'Lærer', '543', ''], ['Signe-Bente Thorsen', 'Elgan', 'Signe-Bente.Elgan@hfk.no', 'Lærer', '522', '3STUSPF'], ['Ingunn Anne', 'Engebø', 'Ingunn.Anne.Engebo@hfk.no', 'Lærer', '326', '1STH'], ['Olaug Ø', 'Engesæter', 'Olaug.Engesaeter@hfk.no', 'Ass rektor', '234', ''], ['Odd Øyvind', 'Fjelldal', 'Odd.Oyvind.Fjelldal@hfk.no', 'Lærer', '325', '1STD'], ['Joannis', 'Fogoudrakis', '', 'Psykolog', '449', ''], ['Jori', 'Færevaag', 'Jori.Faerevaag@hfk.no', 'Lærer', '347', ''], ['Bianca Therese', 'Førlandsås', 'Bianca.Therese.Forlandsas@hfk.no', 'Lærer', '326', '1STH'], ['Ingebrigt Olai', 'Gullaksen', 'imnemfa@hotmail.com', 'IKT lærling', '443', ''], ['Eyvor', 'Gyllander', 'Eyvor.Gyllander@hfk.no', 'Lærer', '521', ''], ['Per', 'Haaland', 'Per.Haaland@hfk.no', 'Lærer', '421', ''], ['Odd', 'Haga', 'Odd.Haga@hfk.no', 'Lærer', '346', '2SSSA'], ['Bent Øystein', 'Halden', 'Bent.Oystein.Halden@hfk.no', 'Lærer', '346', '2ISFB'], ['Dag Christian', 'Halvorsen', 'Dag.Christian.Halvorsen@hfk.no', 'Lærer', '324', '1STB'], ['Kirsten', 'Hatlen', 'Kirsten.Hatlen@hfk.no', 'Lærer', '544', ''], ['Rannveig Fluge', 'Hausnes', 'Rannveig.Hausnes@hfk.no', 'Lærer', '522', ''], ['Jo Bjørnar', 'Hausnes', 'Jo.Bjornar.Hausnes@hfk.no', 'IKT leder', '443', ''], ['Jiqing ', 'He', 'hejiqing@yahoo.com', 'Lærer', '542', ''], ['Yanming', 'He', 'yummyhym@126.com', 'Lærer', '542', ''], ['Grete', 'Heggertveit', 'Grete.Heggertveit@hfk.no', 'Lærer', '344', ''], ['Bente Sjøstrøm', 'Helland', 'Bente.Helland@hfk.no', 'Miljøfagarbeider', '', ''], ['Siri', 'Hellesøy', 'Siri.Hellesoy@hfk.no', 'Lærer', '543', ''], ['Jarle', 'Henriksen', 'Jarle.Henriksen@hfk.no', 'Lærer', '521', '3STUSPC'], ['Tove', 'Heradstveit', 'Tove.Heradstveit@hfk.no', 'Lærer', '346', '2RLVB'], ['Ann Hilde', 'Hofstad', 'Ann.Hilde.Hofstad@hfk.no', 'Lærer', '344', ''], ['Stine', 'Holmen', 'Stine.Holmen@hfk.no', 'Lærer', '422', '2STUSPA'], ['Torstein', 'Hordvik', 'torstein.hordvik@hfk.no', 'Bibliotekar', '', ''], ['Torrey', 'Hummelsund', 'Torrey.Hummelsund@hfk.no', 'Avdelingsleder', '231', ''], ['Sondre', 'Hvidsten', 'Sondre.Hvidsten@hfk.no', 'Miljøfagarbeider', '', ''], ['Hilda', 'Hønsi', 'Hilda.Honsi@hfk.no', 'Lærer', '423', '2STUSPI'], ['Heidi Rye', 'Høyforsslett', 'Heidi.Hoyforsslett@hfk.no', 'Lærer', '523', '3PBPBYA'], ['Helge Martin', 'Jakobsen', 'Helge.Martin.Jakobsen@hfk.no', 'Lærer', '347', ''], ['Vigdis', 'Johannessen', 'Vigdis.Johannessen@hfk.no', 'Renholder', '', ''], ['Srikantharaja', 'Kanagasabi', 'Srikantharaja.Kanagasabi@hfk.no', 'Renholder', '', ''], ['Siv Britt', 'Karlsen', 'Siv.Karlsen@hfk.no', 'Lærer', '421', ''], ['Lise', 'Klepsvik ', 'lise.klepsvik@bergen.kommune.no', 'Helsesøster', '450', ''], ['Hilde Kaland', 'Kongsrud', 'Hilde.Kongsrud@hfk.no', 'Lærer', '326', '1STG'], ['Martin', 'Kvalø', 'Martin.Kvalo@hfk.no', 'Lærer', '543', ''], ['Marit', 'Lahn-Johannessen', 'Marit.Lahn-Johannessen@hfk.no', 'Lærer', '324', '1STC'], ['Torgeir', 'Larsen', 'Torgeir.Larsen@hfk.no', 'Lærer', '423', '2STUSPH'], ['Agnete Petrea', 'Lind', 'Agnete.Petrea.Lind@hfk.no', 'Lærer', '521', '3STUSPB'], ['Mirjam', 'Lundhaug', 'Mirjam.Lundhaug@hfk.no', 'Lærer', '344', '1HTA'], ['Bjørn ', 'Lyngedal', 'Bjorn.Lyngedal@hfk.no', 'Rektor', '233', ''], ['Mari Skjerdal', 'Lysne', 'Mari.Skjerdal.Lysne@hfk.no', 'Lærer', '422', '2STUSPC'], ['Montserrat', 'Løvaas', 'Montserrat.Lovaas@hfk.no', 'Lærer', '325', '1STE'], ['Mercedes Ayala', 'Morales', 'mercedes.ayala.morales@hfk.no', 'Miljøfagarbeider', '', ''], ['Finn', 'Mortensen', 'Finn.Mortensen@hfk.no', 'Lærer', '523', '3PBPBYA'], ['Åge Ingmar', 'Mortvedt', 'Age.Inge.Mortvedt@hfk.no', 'Lærer', '545', ''], ['Linda Therese', 'Myklebust', 'Linda.Therese.Myklebust@hfk.no', 'Lærer', '345', '1SSB'], ['Ole-Jakob', 'Møklebust', 'Ole-Jakob.Moklebust@hfk.no', 'Lærer', '325', '1STF'], ['Stine Haktorsen', 'Nerhus', 'Stine.Nerhus@hfk.no', 'Lærer', '522', '3STUSPH'], ['Tuyet Cam Thi', 'Nguyen', 'Tuyet.Cam.Thi.Nguyen@hfk.no', 'Renholder', '', ''], ['Christian Lunde', 'Nilsen', 'Christian.Nilsen@hfk.no', 'Lærer', '545', ''], ['Leif-Kjetil', 'Nordanger Mjelde', 'Leif-Kjetil.Nordanger.Mjelde@hfk.no', 'IKT lærling', '444', ''], ['Jan Kristian', 'Olsen', 'Jan.Kristian.Olsen@hfk.no', 'Lærer', '544', ''], ['Maria Jose Sanchez', 'Olsen', 'Maria.Olsen@hfk.no', 'Avdelingsleder', '229', ''], ['Øystein', 'Ormåsen', 'Oystein.Ormasen@hfk.no', 'Lærer', '326', '1STI'], ['Merete Skrede', 'Pontes', 'Merete.Pontes@hfk.no', 'Lærer', '344', '2RLVA'], ['Arnfinn', 'Refvik', 'Arnfinn.Refvik@hfk.no', 'Lærer', '345', '1SSD'], ['Bjørn Rune', 'Roti', 'Bjorn.Rune.Roti@hfk.no', 'Lærer', '545', ''], ['Silvia', 'Rovira Ribó', 'Silvia.Rovira.Ribo@hfk.no', 'Avdelingsleder', '228', ''], ['Grete Karin', 'Rye', 'Grete.Karin.Rye@hfk.no', 'Elevinspektør', '447', ''], ['Ørjan', 'Røthe', 'Orjan.Rothe@bergen.kommune.no', 'Psykolog', '451', ''], ['Sigurd', 'Sandvik', 'Sigurd.Sandvik@hfk.no', 'Lærer', '344', '1HTB'], ['Geir', 'Sandøy', 'Geir.Sandoy@hfk.no', 'Rådgiver', '448', ''], ['Christiane', 'Schmidt', 'Christiane.Schmidt@hfk.no', 'Lærer', '324', '1STC'], ['Ewa Maria', 'Siarkiewicz-Bivand', 'Ewa.Siarkiewicz-Bivand@hfk.no', 'Lærer', '324', '1STB'], ['Ingunn Anita L ', 'Silver', 'ingunn.silver@hfk.no', 'Kontor', '232', ''], ['Lill Mari Vibe', 'Simonsen', 'Lill.Mari.Simonsen@hfk.no', 'Lærer', '523', '3MKMEDA'], ['Rungraporn', 'Siriket', 'Rungraporn.Siriket@hfk.no', 'Renholder', '', ''], ['Britt Heidi', 'Sivertsen', 'Britt.Heidi.Sivertsen@hfk.no', 'Lærer', '545', ''], ['Anne-Gerd M', 'Sivertsen', 'anne-gerd.sivertsen@hfk.no', 'Kontor', '232', ''], ['Ida Sæbøe', 'Sjøstrand', 'Ida.Sjostrand@hfk.no', 'Lærer', '544', ''], ['Tove Margrethe', 'Slettebakken', 'Tove.Margret.Slettebakken@hfk.no', 'Lærer', '523', ''], ['Cathrine Børufsen', 'Solberg', 'Cathrine.Solberg@hfk.no', 'Lærer', '545', ''], ['Øyvind', 'Solberg', 'Oyvind.Solberg@hfk.no', 'IKT leder', '443', ''], ['Sissel', 'Solberg-Johansen', 'Sissel.Solberg-Johansen@hfk.no', 'Lærer', '521', '3STUSPA'], ['Silje Monsen', 'Solsvik', 'Silje.Monsen.Solsvik@hfk.no', 'Bibliotekar', '', ''], ['Liv', 'Soulere', 'Liv.Soulere@hfk.no', 'Lærer', '346', ''], ['Brith', 'Spidsø', 'Brith.Spidso@hfk.no', 'Lærer', '345', ''], ['Kristine Sivertsen', 'Stenhaug', 'Kristine.Sivertsen.Stenhaug@hfk.no', 'Adm leder', '232', ''], ['Anny', 'Strand', 'Anny.Strand@hfk.no', 'Lærer', '545', ''], ['Per Christian', 'Strøm', 'Per.Christian.Strom@hfk.no', 'Lærer', '522', ''], ['Haifeng', 'Sun', 'Haifeng.Sun@hfk.no', 'Lærer', '543', ''], ['Gunhild Gundersen', 'Sylte', 'Gunhild.Sylte@hfk.no', 'Lærer', '521', '3STUSPE'], ['Monica', 'Sæther', 'Monica.Saether@hfk.no', 'Lærer', '324', '1STA'], ['Frode', 'Sætre', 'Frode.Saethre@hfk.no', 'Lærer', '346', '2ISFA'], ['Naomi ', 'Søreide', 'Naomi.Soreide@hfk.no', 'Renholder', '', ''], ['Jan Erik', 'Sørensen', 'Jan.Erik.Sorensen@hfk.no', 'Lærer', '345', '1SSC'], ['Tone', 'Taule', 'Tone.Taule@hfk.no', 'Lærer', '421', ''], ['Edeltraud Schmie', 'Thomassen', 'Edeltraud.Thomasen@hfk.no', 'Lærer', '421', ''], ['Vibeke T Falch', 'Thomassen', 'vibeke.thomassen@hfk.no', 'Kontor', '232', ''], ['Sigurlin Thora', 'Thorbergsdottir', 'sigurlin@gmail.com', 'Lærer', '423', ''], ['Mona', 'Thorbjørnsen', 'Mona.Thorbjornsen@bergen.kommune.no', 'Helsesøster', '450', ''], ['Mette Irene', 'Tislevoll', 'Mette.Irene.Tislevoll@hfk.no', 'Lærer', '325', '1STE'], ['Inge Leon', 'Turøy', 'Inge.Leon.Turoy@hfk.no', 'Rådgiver', '446', ''], ['Jorid', 'Valestrand', 'Jorid.Valestrand@hfk.no', 'Rådgiver', '445', ''], ['Hilde', 'Visnes', 'Hilde.Visnes@hfk.no', 'Lærer', '346', ''], ['Erik', 'Vollmer', 'Erik.Vollmer@hfk.no', 'Bibliotekar', '', ''], ['Helen', 'Vølstad', 'Helen.Volstad@hfk.no', 'Lærer', '423', '2STUSPF'], ['Hans Michael', 'Wade', 'Hans.Michael.Wade@hfk.no', 'Lærer', '345', '1SSA'], ['Lisbet Espeland', 'Ystanes', 'Lisbet.Ystanes@hfk.no', 'Lærer', '422', '2STUSPD'], ['Sjur', 'Århus', 'Sjur.Arhus@hfk.no', 'Lærer', '344', ''] ]
+        self.request.url       =   urllib.quote('http://plone.org').decode('utf8')
+    
+        view = api.content.get_view(
+            name='createpage',
+            context=folder,
+            request=self.request,
+        )
         
-        import pdb; pdb.set_trace()
-        for items in toadd:        
-            page = api.content.create(container=folder, type='ansatt', title=(items[0] + ' ' + items[1]), e_post=items[2], kategori=items[3], romnr=items[4], kontaktlaerer=items[5] )
-        return "Done"
+        return "Done"        
+        
+ 
+class XXCreatePages(form.SchemaForm):
+    
+    #ignoreContext = False
+
+    label = 'Import content'
+    description = 'Choose a CSV file'
+
+    @button.buttonAndHandler(u'Import CSV')
+    def handleApply(self, action):
+        data = self.extractData()
+        folder = self.context
+        
+        #path = self.context.absolute_url() + '/@@createpage'
+        #looks ugly, but works
+        self.request.selector = 'body'
+        self.request.url       =   urllib.quote('http://vg.no').decode('utf8')
+    
+        view = api.content.get_view(
+            name='createpage',
+            context=folder,
+            request=self.request,
+        )
+        
+        self.request.url       =   urllib.quote('http://plone.org').decode('utf8')
+    
+        view = api.content.get_view(
+            name='createpage',
+            context=folder,
+            request=self.request,
+        )
+        
+        print view()
+        
+        # Redirect back to the front page with a status message
+        IStatusMessage(self.request).addStatusMessage(
+                "Import finished, reload page to see the content"
+            )
+        contextURL = self.context.absolute_url()
+        self.request.response.redirect(contextURL)
+
+    @button.buttonAndHandler(u"Cancel")
+    def handleCancel(self, action):
+        """User cancelled. Redirect back to the front page.
+        """
+        contextURL = self.context.absolute_url()
+        self.request.response.redirect(contextURL)
+        
+        
+        
+        
+class ICreatePagesFormSchema(form.Schema):
+    """ Define fields used on the form """
+
+    csv_file = NamedFile(title=u"CSV file"
+    
+    
+
+class CreatePages(form.SchemaForm):
+    """ A sample form showing how to mass import users using an uploaded CSV file.
+    """
+
+    # Form label
+    name = u"Import Companies"
+
+    # Which plone.directives.form.Schema subclass is used to define
+    # fields for this form
+    schema = ICreatePagesFormSchema
+
+    
+    
+
+    def processCSV(self, data):
+        """
+        """
+        io =  StringIO.StringIO(data)
+
+        reader = csv.reader(io, delimiter=',', dialect="excel", quotechar='"')
+
+        header = reader.next()
+        print header
+
+        def get_cell(row, name):
+            """ Read one cell on a
+
+            @param row: CSV row as list
+
+            @param name: Column name: 1st row cell content value, header
+            """
+
+            assert type(name) == unicode, "Column names must be unicode"
+
+            index = None
+            for i in range(0, len(header)):
+                if header[i].decode("utf-8") == name:
+                    index = i
+
+            if index is None:
+                raise RuntimeError("CSV data does not have column:" + name)
+
+            return row[index].decode("utf-8")
+
+
+        # Map CSV import fields to a corresponding content item AT fields
+        mappings = {
+                    u"Puhnro" : "phonenumber",
+                    u"Fax" : "faxnumber",
+                    u"Postinumero" : "postalCode",
+                    u"Postitoimipaikka" : "postOffice",
+                    u"Www-osoite" : "homepageLink",
+                    u"Lähiosoite" : "streetAddress",
+                    }
+
+        updated = 0
+
+        for row in reader:
+
+            # do stuff ...
+            updated += 1
+
+
+        return updated
+
+
+    @z3c.form.button.buttonAndHandler(u'Import'), name='import')
+    def importCompanies(self, action):
+        """ Create and handle form button "Create company"
+        """
+
+        # Extract form field values and errors from HTTP request
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        # Do magic
+        file = data["csv_file"].data
+
+        number = self.processCSV(file)
+
+        # If everything was ok post success note
+        # Note you can also use self.status here unless you do redirects
+        if number is not None:
+            # mark only as finished if we get the new object
+            IStatusMessage(self.request).addStatusMessage(
+                "Import finished, reload page to see the content"
+            )
+        
+        
+        
+        
+        
+#class CreatePages(Scrape):
+#    """ Keeping this code until I can make an xml import from Quark Xpress etc."""
+#           
+#    def __call__(self):
+#        #the view is only avalable for folderish content
+#        folder = self.context
+#        #path = self.context.absolute_url() + '/@@createpage'
+#        
+#        #view = api.content.get_view(
+#        #    name='createpage',
+#        #    context=folder,
+#        #    request=request,
+#        #)
+#        toadd =  [['a', 'b', 'c'], ['etc'] ]
+#        
+#        import pdb; pdb.set_trace()
+#        for items in toadd:        
+#            page = api.content.create(container=folder, type='ansatt', title=(items[0] + #' ' + items[1]), e_post=items[2], kategori=items[3], romnr=items[4], #kontaktlaerer=items[5] )
+#        return "Done"
