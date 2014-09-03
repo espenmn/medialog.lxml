@@ -21,10 +21,7 @@ import csv
 
 from plone.namedfile.field import NamedFile
 from plone.i18n.normalizer import idnormalizer
-
-
-
-
+ 
 
 
 
@@ -272,26 +269,73 @@ class XXCreatePages(form.SchemaForm):
         
         
         
-class ICreatePagesFormSchema(form.Schema):
+ 
+ 
+#class CreatePages(Scrape):
+#    """ Keeping this code until I can make an xml import from Quark Xpress etc."""
+#           
+#    def __call__(self):
+#        #the view is only avalable for folderish content
+#        folder = self.context
+#        #path = self.context.absolute_url() + '/@@createpage'
+#        
+#        #view = api.content.get_view(
+#        #    name='createpage',
+#        #    context=folder,
+#        #    request=request,
+#        #)
+#        toadd =  [['a', 'b', 'c'], ['etc'] ]
+#        
+#        import pdb; pdb.set_trace()
+#        for items in toadd:        
+#            page = api.content.create(container=folder, type='ansatt', title=(items[0] + #' ' + items[1]), e_post=items[2], kategori=items[3], romnr=items[4], #kontaktlaerer=items[5] )
+#        return "Done"
+
+
+
+
+
+
+
+
+from zope.interface import Interface
+from zope import schema
+from zope.app.component.hooks import getSite
+from five import grok
+from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore import permissions
+from Products.statusmessages.interfaces import IStatusMessage
+
+# Form and validation
+from z3c.form import field
+import z3c.form.button
+from plone.directives import form
+import plone.autoform.form
+
+import StringIO
+import csv
+
+
+from plone.namedfile.field import NamedFile
+from plone.i18n.normalizer import idnormalizer
+
+
+class IImportUrlsFormSchema(form.Schema):
     """ Define fields used on the form """
 
     csv_file = NamedFile(title=u"CSV file")
-    
-    
 
 class CreatePages(form.SchemaForm):
     """ A sample form showing how to mass import users using an uploaded CSV file.
     """
 
     # Form label
-    name = u"Import Companies"
+    name = u"Import URL pairs"
 
     # Which plone.directives.form.Schema subclass is used to define
     # fields for this form
-    schema = ICreatePagesFormSchema
-
-    
-    
+    schema = IImportUrlsFormSchema
 
     def processCSV(self, data):
         """
@@ -345,7 +389,7 @@ class CreatePages(form.SchemaForm):
         return updated
 
 
-    @button.buttonAndHandler(u'Import', name='import')
+    @z3c.form.button.buttonAndHandler(u'Import', name='import')
     def importCompanies(self, action):
         """ Create and handle form button "Create company"
         """
@@ -365,30 +409,4 @@ class CreatePages(form.SchemaForm):
         # Note you can also use self.status here unless you do redirects
         if number is not None:
             # mark only as finished if we get the new object
-            IStatusMessage(self.request).addStatusMessage(
-                "Import finished, reload page to see the content"
-            )
-        
-        
-        
-        
-        
-#class CreatePages(Scrape):
-#    """ Keeping this code until I can make an xml import from Quark Xpress etc."""
-#           
-#    def __call__(self):
-#        #the view is only avalable for folderish content
-#        folder = self.context
-#        #path = self.context.absolute_url() + '/@@createpage'
-#        
-#        #view = api.content.get_view(
-#        #    name='createpage',
-#        #    context=folder,
-#        #    request=request,
-#        #)
-#        toadd =  [['a', 'b', 'c'], ['etc'] ]
-#        
-#        import pdb; pdb.set_trace()
-#        for items in toadd:        
-#            page = api.content.create(container=folder, type='ansatt', title=(items[0] + #' ' + items[1]), e_post=items[2], kategori=items[3], romnr=items[4], #kontaktlaerer=items[5] )
-#        return "Done"
+            IStatusMessage(self.request).addStatusMessage(u"Created/updated companies:")
