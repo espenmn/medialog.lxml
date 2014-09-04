@@ -8,6 +8,12 @@ from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
+from plone import api
+from medialog.lxml.interfaces import ILxmlSettings
+
+
+#from zope.interface import Interface
+#from Products.CMFCore.utils import getToolByName
 
 # Form and validation
 from z3c.form import field
@@ -15,27 +21,20 @@ from z3c.form import button
 from plone.directives import form
 import plone.autoform.form
 
+#for the csv import
 import StringIO
 import csv
-
-
 from plone.namedfile.field import NamedFile
 from plone.i18n.normalizer import idnormalizer
- 
 
-
-
-from plone import api
-from medialog.lxml.interfaces import ILxmlSettings
-
+#for the scrape_view
 import requests
 import lxml.html
 import urllib 
 from lxml.cssselect import CSSSelector
 from lxml.html.clean import Cleaner
 
-from DateTime import DateTime
- 
+#from DateTime import DateTime
 
 
 class Scrape(BrowserView):
@@ -190,35 +189,6 @@ class CreatePage(Scrape):
         page = api.content.create(container=folder, type='Document', title=scrapetitle, text=bodytext)
 
 
-class OrgCreatePages(Scrape):
-    """ Create pages from list of urls"""
-    
-    def __call__(self):
-        #the view is only avalable for folderish content
-        folder = self.context
-        
-        #path = self.context.absolute_url() + '/@@createpage'
-        #looks ugly, but works
-        self.request.selector = 'body'
-        self.request.url       =   urllib.quote('http://vg.no').decode('utf8')
-    
-        view = api.content.get_view(
-            name='createpage',
-            context=folder,
-            request=self.request,
-        )
-        
-        self.request.url       =   urllib.quote('http://plone.org').decode('utf8')
-    
-        view = api.content.get_view(
-            name='createpage',
-            context=folder,
-            request=self.request,
-        )
-        
-        return "Done"        
-        
- 
 class XXCreatePages(form.SchemaForm):
     
     #ignoreContext = False
@@ -267,10 +237,111 @@ class XXCreatePages(form.SchemaForm):
         self.request.response.redirect(contextURL)
         
         
+ 
+class IImportUrlsFormSchema(form.Schema):
+    """ Define fields used on the form """
+
+    csv_file = NamedFile(title=u"CSV file")
+
+class CreatePages(form.SchemaForm):
+    """ A sample form showing how to mass import content from urls using an uploaded CSV file.
+    """
+
+    # Form label
+    name = u"Import URL pairs from CSV"
+
+    # Which plone.directives.form.Schema subclass is used to define
+    # fields for this form
+    schema = IImportUrlsFormSchema
+
+    ignoreContext = True
+
+    
+    def processCSV(self, data):
+        """ process the csv and make some content
+        """
+        io =  StringIO.StringIO(data)
+
+        reader = csv.reader(io, delimiter=',', dialect="excel", quotechar='"')
+
+        header = reader.next()
+        print header
+
+        def get_cell(row, name):
+            """ Read one cell on a
+            @param row: CSV row as list
+            @param name: Column name: 1st row cell content value, header
+            """
+
+            assert type(name) == unicode, "Column names must be unicode"
+
+            index = None
+            for i in range(0, len(header)):
+                if header[i].decode("utf-8") == name:
+                    index = i
+
+            if index is None:
+                raise RuntimeError("CSV data does not have column:" + name)
+
+            return row[index].decode("utf-8")
+
+
+        # Map CSV import fields to a corresponding 
+        mappings = {
+                    u"url" : "url",
+                    u"selctor" : "selector",
+                    }
+
+        updated = 0
+
+        for row in reader:
+            #look up the folder, maybe set this in the CSV instead
+            folder = self.context        
+            #path = self.context.absolute_url() + '/@@createpage'
+            #looks ugly, but works
+            
+            import pdb; pdb.set_trace()
+            self.request.selector =    row['selector'].decode('utf8')
+            self.request.url       =   row['url'].decode('utf8')
+    
+            view = api.content.get_view(
+                name='createpage',
+                context=folder,
+            request=self.request,
+            )
+
+            updated += 1
+
+        return updated
+
+
+    @button.buttonAndHandler(u'Import', name='import')
+    def importPages(self, action):
+        """ Create and handle form button "Create Content"
+        """
+
+        # Extract form field values and errors from HTTP request
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        # Do magic
+        file = data["csv_file"].data
+
+        number = self.processCSV(file)
+
+        # If everything was ok post success note
+        # Note you can also use self.status here unless you do redirects
+        if number is not None:
+            # mark only as finished if we get the new object
+            IStatusMessage(self.request).addStatusMessage(u"Created pages: " )
+            
+                   
+        
+  
         
         
- 
- 
 #class CreatePages(Scrape):
 #    """ Keeping this code until I can make an xml import from Quark Xpress etc."""
 #           
@@ -298,115 +369,5 @@ class XXCreatePages(form.SchemaForm):
 
 
 
-from zope.interface import Interface
-from zope import schema
-from zope.app.component.hooks import getSite
-from five import grok
-from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore import permissions
-from Products.statusmessages.interfaces import IStatusMessage
-
-# Form and validation
-from z3c.form import field
-import z3c.form.button
-from plone.directives import form
-import plone.autoform.form
-
-import StringIO
-import csv
 
 
-from plone.namedfile.field import NamedFile
-from plone.i18n.normalizer import idnormalizer
-
-
-class IImportUrlsFormSchema(form.Schema):
-    """ Define fields used on the form """
-
-    csv_file = NamedFile(title=u"CSV file")
-
-class CreatePages(form.SchemaForm):
-    """ A sample form showing how to mass import users using an uploaded CSV file.
-    """
-
-    # Form label
-    name = u"Import URL pairs"
-
-    # Which plone.directives.form.Schema subclass is used to define
-    # fields for this form
-    schema = IImportUrlsFormSchema
-
-    def processCSV(self, data):
-        """
-        """
-        io =  StringIO.StringIO(data)
-
-        reader = csv.reader(io, delimiter=',', dialect="excel", quotechar='"')
-
-        header = reader.next()
-        print header
-
-        def get_cell(row, name):
-            """ Read one cell on a
-
-            @param row: CSV row as list
-
-            @param name: Column name: 1st row cell content value, header
-            """
-
-            assert type(name) == unicode, "Column names must be unicode"
-
-            index = None
-            for i in range(0, len(header)):
-                if header[i].decode("utf-8") == name:
-                    index = i
-
-            if index is None:
-                raise RuntimeError("CSV data does not have column:" + name)
-
-            return row[index].decode("utf-8")
-
-
-        # Map CSV import fields to a corresponding content item AT fields
-        mappings = {
-                    u"Puhnro" : "phonenumber",
-                    u"Fax" : "faxnumber",
-                    u"Postinumero" : "postalCode",
-                    u"Postitoimipaikka" : "postOffice",
-                    u"Www-osoite" : "homepageLink",
-                    u"Lähiosoite" : "streetAddress",
-                    }
-
-        updated = 0
-
-        for row in reader:
-
-            # do stuff ...
-            updated += 1
-
-
-        return updated
-
-
-    @z3c.form.button.buttonAndHandler(u'Import', name='import')
-    def importCompanies(self, action):
-        """ Create and handle form button "Create company"
-        """
-
-        # Extract form field values and errors from HTTP request
-        data, errors = self.extractData()
-        if errors:
-            self.status = self.formErrorsMessage
-            return
-
-        # Do magic
-        file = data["csv_file"].data
-
-        number = self.processCSV(file)
-
-        # If everything was ok post success note
-        # Note you can also use self.status here unless you do redirects
-        if number is not None:
-            # mark only as finished if we get the new object
-            IStatusMessage(self.request).addStatusMessage(u"Created/updated companies:")
