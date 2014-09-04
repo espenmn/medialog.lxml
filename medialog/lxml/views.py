@@ -300,6 +300,8 @@ class CreatePages(form.SchemaForm):
             #path = self.context.absolute_url() + '/@@createpage'
             #looks ugly, but works
             
+            #row.split(';')
+            
             import pdb; pdb.set_trace()
             self.request.selector =    row['selector'].decode('utf8')
             self.request.url       =   row['url'].decode('utf8')
