@@ -24,7 +24,7 @@
       <value key="scrape_kill_tags">None</value>
       <value key="scrape_remove_unknown_tags">True</value>
       <value key="scrape_add_nofollow">False</value>
-      <value key="scrape_whitelist_tags">set(['iframe', 'embed'])</value>
+      <value key="scrape_whitelist_tags">['iframe', 'embed'])</value>
   </records>
 
 </registry>

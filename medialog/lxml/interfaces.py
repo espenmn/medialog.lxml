@@ -29,6 +29,14 @@ class IUrlPair(form.Schema):
         required=False
     )
 
+#tags
+class IScrapeTags(form.Schema):
+    scrape_tags = schema.ASCIILine(
+        title=_(u'scrape_tags', 'CSS tags'),
+        required=False,
+    )
+
+
 class ILxmlSettings(form.Schema):
     """Adds settings to medialog.controlpanel
         """
@@ -167,35 +175,37 @@ class ILxmlSettings(form.Schema):
     )
  
 
-    scrape_remove_tags = schema.Tuple(
+    form.widget(scrape_remove_tags=DataGridFieldFactory)
+    scrape_remove_tags = schema.List(
         title=_(u"scrape_remove_tags", 
             default=u"remove tags"),
         description=_(u"help_scrape_remove_tags",
             default="""A list of tags to remove.  
                 Only the tags will be removed,
                 their content will get pulled up into the parent tag."""),
-        value_type=schema.TextLine(),
-        required = False,
+        value_type=DictRow(schema=IScrapeTags),
+        required=False,
     )
-
-
-    scrape_kill_tags = schema.Tuple(
-        title=_(u"scrape_kill_tags", 
+    
+    form.widget(scrape_kill_tags=DataGridFieldFactory)
+    scrape_kill_tags = schema.List(
+         title=_(u"scrape_kill_tags", 
             default=u"Kill tags"),
         description=_(u"help_scrape_kill_tags",
             default="""A list of tags to kill.  Killing also removes the tag's content,
                 i.e. the whole subtree, not just the tag itself."""),
-        value_type=schema.TextLine(),
-        required = False,
+        value_type=DictRow(schema=IScrapeTags),
+        required=False,
     )
-
-    scrape_allow_tags = schema.Tuple(
+    
+    form.widgescrape_allow_tag=DataGridFieldFactory)
+    scrape_allow_tag = schema.List(
         title=_(u"scrape_allow_tags", 
             default=u"Allow tags"),
         description=_(u"help_scrape_allow_tags",
             default="A list of tags to include (default include all)."),
-        value_type=schema.TextLine(),
-        required = False,
+        value_type=DictRow(schema=IScrapeTags),
+        required=False,
     )
 
     scrape_remove_unknown_tags = schema.Bool(
@@ -226,15 +236,16 @@ class ILxmlSettings(form.Schema):
         required = False,
     )
     
-    scrape_whitelist_tags = schema.Tuple(
+    form.widget(scrape_whitelist_tags=DataGridFieldFactory)
+    scrape_whitelist_tags = schema.List(
         title=_(u"scrape_whitelist_tags", 
-            default=u"""A set of tags that can be included with ``host_whitelist"""),
+            default=u"""A set of tags that can be included with `host_whitelist'"""),
         description=_(u"help_scrape_host_whitelist",
-            default="""The default is ``iframe`` and ``embed``; you may wish to
+            default="""The default  normal is ``iframe`` and ``embed``; you may wish to
             include other tags like ``script``, or you may want to
             implement ``allow_embedded_url`` for more control.  Set to None to
             include all tags."""),
-        value_type=schema.TextLine(),
+        value_type=DictRow(schema=IScrapeTags),
         required=False,
     )
      
