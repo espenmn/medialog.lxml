@@ -36,7 +36,6 @@ class IScrapeTags(form.Schema):
         required=False,
     )
 
-
 class ILxmlSettings(form.Schema):
     """Adds settings to medialog.controlpanel
         """
@@ -180,8 +179,7 @@ class ILxmlSettings(form.Schema):
         title=_(u"scrape_remove_tags", 
             default=u"remove tags"),
         description=_(u"help_scrape_remove_tags",
-            default="""A list of tags to remove.  
-                Only the tags will be removed,
+            default="""A list of tags to remove. Only the tags will be removed,
                 their content will get pulled up into the parent tag."""),
         value_type=DictRow(schema=IScrapeTags),
         required=False,
@@ -198,8 +196,8 @@ class ILxmlSettings(form.Schema):
         required=False,
     )
     
-    form.widgescrape_allow_tag=DataGridFieldFactory)
-    scrape_allow_tag = schema.List(
+    form.widget(scrape_allow_tags=DataGridFieldFactory)
+    scrape_allow_tags = schema.List(
         title=_(u"scrape_allow_tags", 
             default=u"Allow tags"),
         description=_(u"help_scrape_allow_tags",
