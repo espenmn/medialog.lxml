@@ -262,56 +262,32 @@ class CreatePages(form.SchemaForm):
         """
         io =  StringIO.StringIO(data)
 
-        reader = csv.reader(io, delimiter=',', dialect="excel", quotechar='"')
+        reader = csv.reader(io, delimiter=';', dialect="excel", quotechar='"')
 
         header = reader.next()
         print header
 
-        def get_cell(row, name):
-            """ Read one cell on a
-            @param row: CSV row as list
-            @param name: Column name: 1st row cell content value, header
-            """
-
-            assert type(name) == unicode, "Column names must be unicode"
-
-            index = None
-            for i in range(0, len(header)):
-                if header[i].decode("utf-8") == name:
-                    index = i
-
-            if index is None:
-                raise RuntimeError("CSV data does not have column:" + name)
-
-            return row[index].decode("utf-8")
-
-
-        # Map CSV import fields to a corresponding 
-        mappings = {
-                    u"url" : "url",
-                    u"selctor" : "selector",
-                    }
-
         updated = 0
+        
+        
+        urlindex = header.index('url')
+        selectorindex = header.index('selector')
+
 
         for row in reader:
             #look up the folder, maybe set this in the CSV instead
             folder = self.context        
             #path = self.context.absolute_url() + '/@@createpage'
             #looks ugly, but works
-            
-            #row.split(';')
-            
-            import pdb; pdb.set_trace()
-            self.request.selector =    row['selector'].decode('utf8')
-            self.request.url       =   row['url'].decode('utf8')
+            self.request.selector =    row[selectorindex].encode('utf8')
+            self.request.url       =   row[urlindex].encode('utf8')
     
             view = api.content.get_view(
                 name='createpage',
                 context=folder,
-            request=self.request,
+                request=self.request,
             )
-
+            #print view()
             updated += 1
 
         return updated
@@ -337,12 +313,8 @@ class CreatePages(form.SchemaForm):
         # Note you can also use self.status here unless you do redirects
         if number is not None:
             # mark only as finished if we get the new object
-            IStatusMessage(self.request).addStatusMessage(u"Created pages: " )
+            IStatusMessage(self.request).addStatusMessage(u"Created pages: " + (str(number)) )
             
-                   
-        
-  
-        
         
 #class CreatePages(Scrape):
 #    """ Keeping this code until I can make an xml import from Quark Xpress etc."""
