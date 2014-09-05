@@ -19,7 +19,7 @@ setup(name='medialog.lxml',
       classifiers=[
         "Programming Language :: Python",
         ],
-      keywords='embed plone lxml',
+      keywords='embed plone lxml migrate csv impoort',
       author='Espen Moe-Nilssen',
       author_email='espen@medialog.no',
       url='http://github.com/espenmn/medialog.lxml',
