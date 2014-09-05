@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3 (2014.09.05)
+-------------------
+- better settings in the control panel
+- import view for urls and selectors list in a csv file
+- /@@createpages view 
+
 0.2 (2014.08.24)
 -------------------
 - First proper release
