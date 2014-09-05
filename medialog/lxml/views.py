@@ -87,7 +87,7 @@ class Scrape(BrowserView):
         #this is for use in the createpage view
         self.scrapetitle = (tree.xpath('//title/text()'))[0]# Get page title  
              
-        #clean evil stuff
+        #clean evil stuff, thanks jessnyder for list comp.
         cleaner = Cleaner(
             add_nofollow = scrape_add_nofollow,
             allow_tags =  [item['scrape_tags'] for item in scrape_allow_tags],
