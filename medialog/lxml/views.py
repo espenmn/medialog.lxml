@@ -90,7 +90,7 @@ class Scrape(BrowserView):
         #clean evil stuff
         cleaner = Cleaner(
             add_nofollow = scrape_add_nofollow,
-            allow_tags = scrape_allow_tags,
+            allow_tags =  [item['scrape_tags'] for item in scrape_allow_tags],
             annoying_tags =  scrape_annoying_tags,
             comments = scrape_comments,
             embedded = scrape_embedded,
@@ -98,18 +98,19 @@ class Scrape(BrowserView):
             frames =  scrape_frames,
             host_whitelist = scrape_whitelist,
             javascript = scrape_javascript , 
-            kill_tags = scrape_kill_tags,
+            kill_tags =  [item['scrape_tags'] for item in scrape_kill_tags],
             links = scrape_links ,
             meta = scrape_meta,
             page_structure = scrape_page_structure ,
             processing_instructions = scrape_processing_instructions,
-            remove_tags = scrape_remove_tags,
+            remove_tags =  [item['scrape_tags'] for item in scrape_remove_tags],
             remove_unknown_tags = scrape_remove_unknown_tags,
             safe_attrs_only = scrape_safe_attrs_only,
             scripts =  scrape_scripts ,
             style = scrape_style, 
-            whitelist_tags = scrape_whitelist_tags
+            whitelist_tags =  [item['scrape_tags'] for item in scrape_whitelist_tags] 
         )
+        
         cleaner(tree)
         
         #the parsed DOM Tree

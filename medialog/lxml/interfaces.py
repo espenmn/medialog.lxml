@@ -36,6 +36,12 @@ class IScrapeTags(form.Schema):
         required=False,
     )
 
+    scrape_tags_description = schema.ASCIILine(
+        title=_(u'scrape_tags_description', 
+            'Description (optional, just to remember why you put it there'),
+        required=False,
+    )
+
 class ILxmlSettings(form.Schema):
     """Adds settings to medialog.controlpanel
         """
@@ -229,7 +235,7 @@ class ILxmlSettings(form.Schema):
                 Anything that passes this test will be shown, regardless of
                 the value of (for instance) ``embedded``.
                 Note that this parameter might not work as intended if you do not
-                make the links absolute."""),
+                make the links absolute. Note that you may also need to set whitelist_tags."""),
         value_type=schema.URI(),
         required = False,
     )
