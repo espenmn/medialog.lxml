@@ -15,16 +15,16 @@ About the views and behavior
 
 
 
-How to embed another webpage in your site
+How to embed another webpage to your site
 =========================================
 
-- go to control panel.
+- go to the control panel.
 
 - in the medialog.control panel, set *default settings for your embed views*
 
 - add a dexterity content type
 
-- add  LXML embed behaviour 
+- add LXML embed behaviour 
 
 - Add a content type to your site and enter embed details
 
@@ -34,7 +34,7 @@ How to embed another webpage in your site
 
 
 
-How add content from another webpage in your site
+How add content from another webpage to your site
 =================================================
 
 - be sure to set up whitelist and url pairs in the control panel
@@ -44,8 +44,8 @@ How add content from another webpage in your site
 - PS: Settings in the medialog control panel and html safe settings are taken into account
 
 
-How batch add content from other webpages in your site
-=================================================
+How batch add content from other webpages to your site
+=======================================================
 
 - make a CSV file with ‘url’ and ‘selector’ rows
 - go to a folder
