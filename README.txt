@@ -44,6 +44,16 @@ How add content from another webpage in your site
 - PS: Settings in the medialog control panel and html safe settings are taken into account
 
 
+How batch add content from other webpages in your site
+=================================================
+
+- make a CSV file with ‘url’ and ‘selector’ rows
+- go to a folder
+- add /@@createpages
+- select the cdv file
+- A page for each corresponding url & selector will be added
+- In other words, if you add a line with http://plone.org and #content-core, a Page will be added to your site and the body text will be that of #content-core in plone.org’s front page.
+
  
 The view
 ========
