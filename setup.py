@@ -12,7 +12,7 @@ long_description = (
 
 setup(name='medialog.lxml',
       version=version,
-      description="A Product to embed content with lxml",
+      description="A Product to embed/add/migrate content with lxml",
       long_description=long_description,
       # Get more strings from
       # http://pypi.python.org/pypi?%3Aaction=list_classifiers
