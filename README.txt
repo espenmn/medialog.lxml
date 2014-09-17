@@ -50,9 +50,9 @@ How batch add content from other webpages to your site
 - make a CSV file with ‘url’ and ‘selector’ rows
 - go to a folder
 - add /@@createpages
-- select the cdv file
+- select the CSV file
 - A page for each corresponding url & selector will be added
-- In other words, if you add a line with http://plone.org and #content-core, a Page will be added to your site and the body text will be that of #content-core in plone.org’s front page.
+- In other words, if you add a line with http://plone.org and #content-core, a Page will be added to your site and the body text will be that of #content-core from plone.org’s front page.
 
  
 The view
