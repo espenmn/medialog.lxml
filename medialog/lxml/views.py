@@ -8,6 +8,8 @@ from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
+from plone.app.textfield.value import RichTextValue
+
 from plone import api
 from medialog.lxml.interfaces import ILxmlSettings
 
@@ -183,12 +185,13 @@ class CreatePage(Scrape):
         folder = self.context
         #get url if it was set in the request
         if hasattr(self.request, 'url'):
-            self.request.url = str(urllib.unquote((self.request.url).decode('utf8')))
+            url = str(urllib.unquote((self.request.url).decode('utf8')))
         
         bodytext = self.scraped()
+        text = RichTextValue(bodytext)
         scrapetitle = self.scrapetitle.encode('utf8')
-        page = api.content.create(container=folder, type='Document', title=scrapetitle, text=bodytext)
-
+        page = api.content.create(container=folder, type='Document', title=scrapetitle, text=text)()
+        pass
 
 class XXCreatePages(form.SchemaForm):
     
@@ -287,7 +290,7 @@ class CreatePages(form.SchemaForm):
                 name='createpage',
                 context=folder,
                 request=self.request,
-            )
+            )()
             #print view()
             updated += 1
 
