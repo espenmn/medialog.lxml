@@ -1,5 +1,10 @@
 Changelog
-=========
+==========
+
+0.3 (2016.07.15)
+-------------------
+- Plone 5 / dexterity support
+ 
 
 0.3 (2014.09.05)
 -------------------
@@ -7,9 +12,11 @@ Changelog
 - import view for urls and selectors list in a csv file
 - /@@createpages view 
 
+
 0.2 (2014.08.24)
 -------------------
 - First proper release
+
 
 0.1dev (2014.08.07)
 -------------------
